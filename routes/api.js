@@ -30,8 +30,8 @@ router.post('/notes/parse', async (req, res) => {
         // 2. --- CREATE THE RECORD WITH THE STRUCTURED DATA ---
         // Syntax Correction: Use a colon (:) not an equals sign (=) for properties
         const newRecord = new BehaviorRecord ({
-            originalText: originalText, // 🔑 Store the original text
-            ...llmData                 // 🔑 Spread the structured data returned by the LLM
+            originalText: originalText, // Store the original text
+            ...llmData                 //  Spread the structured data returned by the LLM
         });
         
         // 3. --- SAVE THE RECORD TO THE DATABASE ---
@@ -49,5 +49,16 @@ router.post('/notes/parse', async (req, res) => {
     }
 });
 
+router.get('/records', async (req,res) => {
+    try {
+        const records = await BehaviorRecord.find({}); // returns all records for now. Auth and filtering later
+        res.status(200).json(records);
+    } catch (error) {
+        console.error('Database retrieval error:',error.message);
+        res.status(500).json({ error: 'Failed to retrieve behavior records.', detail: error.message });
+
+    }
+   
+})
 
 module.exports = router;
