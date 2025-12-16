@@ -32,7 +32,11 @@ async function callOpenAIApi(notes) {
             messages: [
                 {
                     role: "system",
-                    content: "You are a specialized assistant that extracts structured student behavior records from unstructured teacher notes. You must always use the `parse_behavior_record` tool."
+                    content: `You are a specialized assistant that extracts structured student behavior records from unstructured teacher notes. 
+You must always use the \`parse_behavior_record\` tool. 
+If there are multiple students mentioned in a note, the data returned should be an array of objects, one for each student mentioned. 
+Note that the severity and intervention requirements should be in line with a high school environment.
+Do not ever guess student_name or class_name, if this information is not explicitly mentioned in the note just return an empty string.` 
                 },
                 {
                     role: "user",
