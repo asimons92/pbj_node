@@ -5,6 +5,7 @@ const router = express.Router();
 const { callLlmApi } = require('../services/llm_service');
 // Import BehaviorRecord model
 const BehaviorRecord = require('../models/BehaviorRecord');
+const behaviorRecord = require('../models/BehaviorRecord');
 
 // Define GET route (Keep this at the bottom or top, doesn't affect flow)
 router.get('/', (req, res) => {
@@ -51,7 +52,20 @@ router.post('/notes/parse', async (req, res) => {
 
 router.get('/records', async (req,res) => {
     try {
-        const records = await BehaviorRecord.find({}); // returns all records for now. Auth and filtering later
+        const { student_name, category, severity } = req.query;
+        const filter = {};
+        if (student_name) {
+            filter.student_name = { $regex: student_name, $options: 'i'};
+
+        }
+        if (category) {
+            filter['behavior.category'] = category;
+        }
+        if (severity) {
+            filter['behavior.severity'] = severity;
+        }
+
+        const records = await BehaviorRecord.find(filter).sort({ recording_timestamp: -1});
         res.status(200).json(records);
     } catch (error) {
         console.error('Database retrieval error:',error.message);
