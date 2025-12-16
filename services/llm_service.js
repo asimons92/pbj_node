@@ -9,21 +9,41 @@ const openai = new OpenAI({
 // define zod schema
 
 const LlmOutputSchema = z.object({
-    student_name: z.string().min(1),
-    behavior: z.object({
-        category: z.enum([
-            "off-task", "disruption", "non-participation", "tardy", "absence",
-            "peer-disruption", "technology-violation", "prosocial", "defiance",
-            "aggression", "self-management", "respect", "other"
-        ]),
-        description: z.string().min(1),
-        severity: z.enum(['low','moderate','high']),
-        is_positive: z.boolean(),
-        needs_followup: z.boolean(),
-        tags: z.array(z.string())
-    })
-
+    records: z.array(z.object({
+        student_name: z.string().min(1),
+        student_id: z.string().optional(),
+        recording_timestamp: z.string(),
+        behavior_date: z.string().optional(),
+        source: z.enum(["teacher_note"]),
+        behavior: z.object({
+            category: z.enum([
+                "off-task", "disruption", "non-participation", "tardy", "absence",
+                "peer-disruption", "technology-violation", "prosocial", "defiance",
+                "aggression", "self-management", "respect", "other"
+            ]),
+            description: z.string().min(1),
+            severity: z.enum(['low','moderate','high']),
+            is_positive: z.boolean(),
+            needs_followup: z.boolean(),
+            tags: z.array(z.string())
+        }),
+        context: z.object({
+            class_name: z.string().optional(),
+            teacher: z.string().optional(),
+            activity: z.string().optional(),
+            group_ids: z.array(z.string()).optional(),
+            location: z.string().optional()
+        }).optional(),
+        intervention: z.object({
+            status: z.enum(["none", "recommended", "in_progress", "completed"]).optional(),
+            type: z.string().optional(),
+            notes: z.string().optional(),
+            tier: z.enum(["universal", "tier_1", "tier_2", "tier_3"]).optional()
+        }).optional()
+    }))
 })
+
+
 
 async function callOpenAIApi(notes) {
     try {
