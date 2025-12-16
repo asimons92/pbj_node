@@ -19,16 +19,14 @@ mongoose
 // middleware
 // enables app to read JSON data sent in POST req body
 app.use(express.json())
+app.use(express.static('public'));
+
 
 //import API router file
 const apiRouter = require('./routes/api');
 //set up API base path
 app.use('/api',apiRouter)
 
-//index frontend placeholder
-app.get('/',(req,res) => {
-    res.send('<h1>Full-Stack App Root</h1><p>The API is running at <a href="/api">/api</a></p>');
-})
 // listener
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

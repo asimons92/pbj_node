@@ -1,0 +1,131 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* Header styles */
+.header {
+    background-color: #4a90e2;
+    color: white;
+    padding: 30px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    font-size: 2em;
+    font-weight: 600;
+}
+
+/* Text entry form */
+.text-entry {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+#note-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#note-form label {
+    font-weight: 600;
+    color: #555;
+}
+
+#note {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.3s;
+}
+
+#note:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+#note-form button {
+    background-color: #4a90e2;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    align-self: flex-start;
+}
+
+#note-form button:hover {
+    background-color: #357abd;
+}
+
+#note-form button:active {
+    transform: translateY(1px);
+}
+
+/* Result container */
+.result-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.result-container h2 {
+    margin-bottom: 15px;
+    color: #555;
+}
+
+#result {
+    background-color: #f8f8f8;
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+    min-height: 100px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .title {
+        font-size: 1.5em;
+    }
+
+    .header,
+    .text-entry,
+    .result-container {
+        padding: 20px;
+    }
+}
+
