@@ -4,7 +4,6 @@ const resultContainer = document.getElementById('result-container');
 const API_URL = '/api/notes/parse';
 
 
-
 function displayRecordsAsTable(record) {
     let parsedDataTable = document.querySelector('.parsed-data-table');
     if (!parsedDataTable) {
@@ -42,7 +41,7 @@ function displayRecordsAsTable(record) {
             </tbody>
         </table>
     `;
-    parsedDataTable.innerHTML = html
+    parsedDataTable.innerHTML += html;
 }
 
 form.addEventListener('submit', async (event) => {
@@ -73,14 +72,16 @@ form.addEventListener('submit', async (event) => {
             const errorData = await response.json();
             throw new Error(errorData.detail || `HTTP error! Status: ${response.status}`);
         }
-        const record = await response.json();
 
-        displayRecordsAsTable(record);
+        const response_array = await response.json();
+        parsedDataTable.innerHTML = ''; // Clear the "Processing..." message
+        response_array.forEach( (record) => {
+            displayRecordsAsTable(record)
+         });
         noteInput.value = '';
     } catch (error) {
         console.error('Frontend Fetch Error:', error);
         parsedDataTable.innerHTML = `<p>Processing failed: ${error.message}</p>`;
     }
-
-} )
+});
 

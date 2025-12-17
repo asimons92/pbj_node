@@ -14,7 +14,7 @@ const LlmOutputSchema = z.object({
         student_id: z.string().optional(),
         recording_timestamp: z.string(),
         behavior_date: z.string().optional(),
-        source: z.enum(["teacher_note"]),
+        source: z.string().optional(),
         behavior: z.object({
             category: z.enum([
                 "off-task", "disruption", "non-participation", "tardy", "absence",

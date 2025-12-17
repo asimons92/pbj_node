@@ -17,7 +17,6 @@ const BEHAVIOR_RECORD_TOOL = {
                         "student_id": { "type": "string" },
                         "recording_timestamp": { "type": "string" },
                         "behavior_date": { "type": "string" },
-                        "source": { "type": "string", "enum": ["teacher_note"] },
                         "behavior": {
                           "type": "object",
                           "properties": {
@@ -79,7 +78,7 @@ const BEHAVIOR_RECORD_TOOL = {
                           }
                         }
                       },
-                      "required": ["student_name", "recording_timestamp", "source", "behavior"]
+                      "required": ["student_name", "recording_timestamp","behavior"]
                     }
                   }
                 }
