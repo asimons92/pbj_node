@@ -129,3 +129,85 @@ body {
     }
 }
 
+/* Historical Records Container */
+.historical-records-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.historical-records-container h2 {
+    margin-bottom: 15px;
+    color: #555;
+}
+
+#records-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    max-height: 600px;
+    padding: 10px;
+}
+
+/* Record Card Styles */
+.record-card {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #4a90e2;
+}
+
+.card-header h3 {
+    margin: 0;
+    color: #4a90e2;
+    font-size: 1.2em;
+}
+
+.card-date {
+    color: #777;
+    font-size: 0.9em;
+}
+
+.card-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.card-field {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+    min-width: 150px;
+    flex: 1 1 auto;
+}
+
+.field-label {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.85em;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.field-value {
+    color: #333;
+    font-size: 0.95em;
+}

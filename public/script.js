@@ -2,6 +2,8 @@ const form = document.getElementById('note-form');
 const noteInput = document.getElementById('note');
 const resultContainer = document.getElementById('result-container');
 const API_URL = '/api/notes/parse';
+const GET_RECORDS_URL = '/api/records'
+const recordsList = document.getElementById('records-list');
 
 
 function displayRecordsAsTable(record) {
@@ -85,3 +87,76 @@ form.addEventListener('submit', async (event) => {
     }
 });
 
+function displayHistoricalRecordsAsTable(record) {
+
+    if (!recordsList) {
+        // If element doesn't exist, create it instead of replacing the container
+        recordsList = document.createElement('div');
+        recordsList.className = 'records-list';
+        recordsList.appendChild(recordsList);
+    }
+    
+    const behavior = record.behavior || {};
+    let html = `
+        <div class="record-card">
+            <div class="card-header">
+                <h3>${record.student_name}</h3>
+                <span class="card-date">${new Date(record.behavior_date || record.recording_timestamp).toLocaleDateString()}</span>
+            </div>
+            <div class="card-body">
+                <div class="card-field">
+                    <span class="field-label">Category:</span>
+                    <span class="field-value">${behavior.category || 'N/A'}</span>
+                </div>
+                <div class="card-field">
+                    <span class="field-label">Severity:</span>
+                    <span class="field-value">${behavior.severity || 'N/A'}</span>
+                </div>
+                <div class="card-field">
+                    <span class="field-label">Positive?</span>
+                    <span class="field-value">${behavior.is_positive ? 'Yes' : 'No'}</span>
+                </div>
+                <div class="card-field">
+                    <span class="field-label">Follow-up Needed?</span>
+                    <span class="field-value">${behavior.needs_followup ? 'Yes' : 'No'}</span>
+                </div>
+                <div class="card-field">
+                    <span class="field-label">Description:</span>
+                    <span class="field-value">${behavior.description || 'N/A'}</span>
+                </div>
+                <div class="card-field">
+                    <span class="field-label">Tags:</span>
+                    <span class="field-value">${behavior.tags ? behavior.tags.join(', ') : 'N/A'}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    recordsList.innerHTML += html;
+}
+
+async function loadHistoricalRecords() {
+    try{
+        const response = await fetch(GET_RECORDS_URL,{
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+                if (!response.ok) {
+            // Throw an error that the catch block will handle
+            const errorData = await response.json();
+            throw new Error(errorData.detail || `HTTP error! Status: ${response.status}`);
+        }
+        const parsed_records = await response.json();
+        recordsList.innerHTML = '';
+        parsed_records.forEach( (record) => {
+            displayHistoricalRecordsAsTable(record);
+        })
+    } catch (error) {
+        console.error('Error fetching historical records:', error);
+        recordsList.innerHTML = `<p> Record fetch failed: ${error.message}</p>`;
+    }
+
+}
+
+loadHistoricalRecords();
