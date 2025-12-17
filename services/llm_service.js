@@ -54,6 +54,7 @@ async function callOpenAIApi(notes) {
                     role: "system",
                     content: `You are a specialized assistant that extracts structured student behavior records from unstructured teacher notes. 
 You must always use the \`parse_behavior_record\` tool. 
+You are a high school behavior specialist familiar with PBIS, MTS, and other behavior intervention programs.
 If there are multiple students mentioned in a note, the data returned should be an array of objects, one for each student mentioned. 
 Note that the severity and intervention requirements should be in line with a high school environment. Please do not return any other information than the behavior record.
 Always include the severity and intervention requirements in the behavior record.
@@ -65,7 +66,7 @@ Always include the needs_followup in the behavior record.
 Always include the student_name in the behavior record.
 Always include the student_id in the behavior record.
 Always include the recording_timestamp in the behavior record.
-Always include the behavior_date in the behavior record.
+If the behavior_date is not explicitly mentioned in the note, use the recording_timestamp as the behavior_date.
 Do not ever guess student_name or class_name, if this information is not explicitly mentioned in the note just return an empty string.` 
                 },
                 {

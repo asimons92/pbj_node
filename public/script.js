@@ -159,4 +159,6 @@ async function loadHistoricalRecords() {
 
 }
 
+document.getElementById('refresh-button').addEventListener('click', loadHistoricalRecords);
+
 loadHistoricalRecords();
