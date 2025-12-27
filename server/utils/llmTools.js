@@ -88,3 +88,4 @@ const BEHAVIOR_RECORD_TOOL = {
   
 
   module.exports = { BEHAVIOR_RECORD_TOOL };
+

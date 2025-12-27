@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
 const app = express();
 const PORT = 3000;
 require('dotenv').config(); // load environment variables
@@ -19,7 +20,7 @@ mongoose
 // middleware
 // enables app to read JSON data sent in POST req body
 app.use(express.json())
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../public')));
 
 
 //import API router file
@@ -31,3 +32,4 @@ app.use('/api',apiRouter)
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+

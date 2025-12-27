@@ -111,3 +111,4 @@ const BehaviorRecordSchema = new Schema({
 
 // Export the Model, using 'BehaviorRecord' as the collection name
 module.exports = mongoose.model('BehaviorRecord', BehaviorRecordSchema);
+
