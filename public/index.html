@@ -28,6 +28,32 @@
         <h2>Historical Behavior Records</h2>
         <div id="filter-controls">
             <button id="refresh-button">Refresh Records</button>
+            <form id="filter-form">
+            <input type="text" name="student_name" id="student-name-filter" placeholder="Search by student name...">
+            <select name="category" id="category-filter">
+                <option value="all">All Categories</option>
+                <option value="off-task">Off-Task</option>
+                <option value="disruption">Disruption</option>
+                <option value="non-participation">Non-Participation</option>
+                <option value="tardy">Tardy</option>
+                <option value="absence">Absence</option>
+                <option value="peer-disruption">Peer Disruption</option>
+                <option value="technology-violation">Technology Violation</option>
+                <option value="prosocial">Prosocial</option>
+                <option value="defiance">Defiance</option>
+                <option value="aggression">Aggression</option>
+                <option value="self-management">Self-Management</option>
+                <option value="respect">Respect</option>
+                <option value="other">Other</option>
+            </select>
+            <select name="severity" id="severity-filter">
+                <option value="all">All Severities</option>
+                <option value="low">Low</option>
+                <option value="moderate">Moderate</option>
+                <option value="high">High</option>
+            </select>
+            <button type="submit" id="apply-filters">Apply Filters</button>
+            </form>
         </div>
         <div id="records-list">
             <p>Loading records...</p>

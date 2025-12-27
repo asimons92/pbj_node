@@ -73,5 +73,10 @@ Thumbs.db
 # Yarn Integrity file
 .yarn-integrity
 
-#learning
+# Vite
+.vite/
+vite.config.*.timestamp-*
+
+# Instructional markdown files
 APPLICATION_FLOW.md
+PAGINATION_GUIDE.md

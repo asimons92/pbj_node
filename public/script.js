@@ -5,7 +5,6 @@ const API_URL = '/api/notes/parse';
 const GET_RECORDS_URL = '/api/records'
 const recordsList = document.getElementById('records-list');
 
-
 function displayRecordsAsTable(record) {
     let parsedDataTable = document.querySelector('.parsed-data-table');
     if (!parsedDataTable) {
@@ -134,29 +133,73 @@ function displayHistoricalRecordsAsTable(record) {
     recordsList.innerHTML += html;
 }
 
-async function loadHistoricalRecords() {
+async function loadHistoricalRecords(page = 1) {
     try{
-        const response = await fetch(GET_RECORDS_URL,{
+        // Build query string with pagination
+        const params = new URLSearchParams({
+            page: page.toString(),
+            limit: '10'
+        });
+
+        const response = await fetch(`${GET_RECORDS_URL}?${params.toString()}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-                if (!response.ok) {
-            // Throw an error that the catch block will handle
+        
+        if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.detail || `HTTP error! Status: ${response.status}`);
         }
-        const parsed_records = await response.json();
+    
         recordsList.innerHTML = '';
-        parsed_records.forEach( (record) => {
+
+        const data = await response.json();
+        const records = data.records || [];
+        const pagination = data.pagination || {};
+
+        records.forEach((record) => {
             displayHistoricalRecordsAsTable(record);
-        })
+        });
+
+        // Display pagination controls after records
+        displayPaginationControls(pagination);
     } catch (error) {
         console.error('Error fetching historical records:', error);
         recordsList.innerHTML = `<p> Record fetch failed: ${error.message}</p>`;
     }
+}
 
+function displayPaginationControls(pagination) {
+    const html = `
+    <div class="pagination-controls">
+        <button id="prev-btn" ${!pagination.hasPrevPage ? 'disabled' : ''}>Previous</button>
+        <span>Page ${pagination.currentPage} of ${pagination.totalPages}</span>
+        <button id="next-btn" ${!pagination.hasNextPage ? 'disabled' : ''}>Next</button>
+    </div>
+    `;
+    recordsList.insertAdjacentHTML('beforeend', html);
+    
+    // Add event listeners - need to do this after the HTML is inserted
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (pagination.hasPrevPage) {
+                loadHistoricalRecords(pagination.currentPage - 1);
+            }
+        });
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (pagination.hasNextPage) {
+                loadHistoricalRecords(pagination.currentPage + 1);
+            }
+        });
+    }
 }
 
 document.getElementById('refresh-button').addEventListener('click', loadHistoricalRecords);

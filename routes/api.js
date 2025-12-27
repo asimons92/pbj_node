@@ -74,6 +74,10 @@ router.post('/notes/parse', async (req, res) => {
 });
 
 router.get('/records', async (req,res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page-1) * limit;
+
     try {
         const { student_name, category, severity } = req.query;
         const filter = {};
@@ -87,9 +91,28 @@ router.get('/records', async (req,res) => {
         if (severity) {
             filter['behavior.severity'] = severity;
         }
+        const [records, totalCount] = await Promise.all([
+            BehaviorRecord.find(filter).sort({ recording_timestamp: -1})
+            .skip(skip)
+            .limit(limit),
+            BehaviorRecord.countDocuments(filter)
+        ]);
 
-        const records = await BehaviorRecord.find(filter).sort({ recording_timestamp: -1});
-        res.status(200).json(records);
+        const totalPages = Math.ceil(totalCount / limit);
+        const hasNextPage = page < totalPages;
+        const hasPrevPage = page > 1;
+
+        res.status(200).json({
+            records: records,
+            pagination: {
+                currentPage: page,
+                totalPages: totalPages,
+                totalCount: totalCount,
+                limit: limit,
+                hasNextPage: hasNextPage,
+                hasPrevPage: hasPrevPage
+            }
+        });
     } catch (error) {
         console.error('Database retrieval error:',error.message);
         res.status(500).json({ error: 'Failed to retrieve behavior records.', detail: error.message });
