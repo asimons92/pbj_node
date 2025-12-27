@@ -3,8 +3,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-// --- 1. Define the Nested Schemas First ---
-// This makes the main schema cleaner and allows reuse if needed.
+
 
 // Maps to the 'behavior' object
 const BehaviorSchema = new Schema({
@@ -44,7 +43,7 @@ const BehaviorSchema = new Schema({
 // Maps to the 'context' object
 const ContextSchema = new Schema({
     class_name: String,
-    teacher: String,
+    teacher: String, // Link to a User object
     activity: String,
     group_ids: [String],
     location: String

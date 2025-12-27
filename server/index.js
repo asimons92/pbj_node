@@ -20,13 +20,15 @@ mongoose
 // middleware
 // enables app to read JSON data sent in POST req body
 app.use(express.json())
-app.use(express.static(path.join(__dirname, '../public')));
 
 
-//import API router file
-const apiRouter = require('./routes/api');
-//set up API base path
-app.use('/api',apiRouter)
+// Import route files
+const apiRouter = require('./routes/notes.route');
+const authRouter = require('./routes/auth.route');
+
+// Set up route paths
+app.use('/api', apiRouter);
+app.use('/auth', authRouter);
 
 // listener
 app.listen(PORT, () => {

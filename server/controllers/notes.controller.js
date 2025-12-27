@@ -1,21 +1,23 @@
-const express = require('express');
-const router = express.Router();
-
 // Import LLM service (matches `services/llm_service.js`)
 const { callLlmApi } = require('../services/llm_service');
 // Import BehaviorRecord model
-const BehaviorRecord = require('../models/BehaviorRecord');
+const BehaviorRecord = require('../models/BehaviorRecord.model');
 
 
-// Define GET route (Keep this at the bottom or top, doesn't affect flow)
-router.get('/', (req, res) => {
-    res.json({ 
+const testGet = async (req,res) => {
+    try {
+        res.json({
         status: 'API operational',
-        message: 'Send a POST request to /api/notes/parse to submit teacher notes.'
-    });
-});
+        message: 'Send a POST request to /api/records/parse to submit teacher notes.'
+        })
+    } catch (error) {
+        res.status(500).json({ error: error.message || 'An error occurred' });
+    }
+};
 
-router.post('/notes/parse', async (req, res) => {
+// post new record
+
+const postNote = async (req, res) => {
     const originalText = req.body.teacherNotes; // Renamed 'notes' to 'originalText' for clarity
 
     if (!originalText) {
@@ -31,7 +33,7 @@ router.post('/notes/parse', async (req, res) => {
 
         if (!llmData.records) {
             return res.status(400).json({ error: 'Empty array in res body'})
-        };
+        }
 
         const recordsToSave = llmData.records.map(record => ({
             originalText: originalText,
@@ -59,6 +61,11 @@ router.post('/notes/parse', async (req, res) => {
                     index: err.index,
                     error: err.errmsg
                 }));
+                res.status(207).json({
+                    successful,
+                    failed,
+                    message: `Partially saved: ${successful.length} succeeded, ${failed.length} failed `
+                })
             } else {
                 throw error;
             }
@@ -71,9 +78,9 @@ router.post('/notes/parse', async (req, res) => {
         console.error('LLM API or Database Error:', error.message);
         res.status(500).json({ error: 'Failed to process or save notes.', detail: error.message});
     }
-});
+};
 
-router.get('/records', async (req,res) => {
+const getNotes = async (req,res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page-1) * limit;
@@ -119,7 +126,16 @@ router.get('/records', async (req,res) => {
 
     }
    
-})
+}
 
-module.exports = router;
+module.exports = {
+    testGet,
+    postNote,
+    getNotes
+    
+
+}
+
+
+
 
