@@ -43,8 +43,18 @@ export const AuthProvider = ({ children }) => {
         }
       }, []);
 
+      const isAuthenticated = useCallback(() => {
+        if (!token) {
+          return false;
+        }
+        if (isTokenExpired(token)) {
+          return false;
+        }
+        return true;
+        },[ token ])
+
       return (
-        <AuthContext.Provider value={{ token, user, login, logout, loading }}>
+        <AuthContext.Provider value={{ token, user, login, logout, loading, isAuthenticated }}>
           {/* We don't render children until we've checked localStorage */}
           {!loading && children}
         </AuthContext.Provider>

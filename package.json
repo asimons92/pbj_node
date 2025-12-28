@@ -4,7 +4,10 @@
   "main": "server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server/index.js"
+    "dev": "nodemon server/index.js",
+    "dev:server": "nodemon server/index.js",
+    "dev:client": "cd client/pbj && npm run dev",
+    "dev:all": "concurrently \"npm run dev:server\" \"npm run dev:client\" --names \"SERVER,CLIENT\" --prefix-colors \"blue,green\""
   },
   "keywords": [],
   "author": "",
@@ -21,5 +24,8 @@
     "openai": "^6.13.0",
     "uuid": "^13.0.0",
     "zod": "^4.2.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }

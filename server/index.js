@@ -28,7 +28,7 @@ const authRouter = require('./routes/auth.route');
 
 // Set up route paths
 app.use('/api', apiRouter);
-app.use('/auth', authRouter);
+
 
 // listener
 app.listen(PORT, () => {
