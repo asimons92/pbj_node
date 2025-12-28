@@ -80,3 +80,4 @@ vite.config.*.timestamp-*
 # Instructional markdown files
 APPLICATION_FLOW.md
 PAGINATION_GUIDE.md
+SCHEMA_CHANGES_GUIDE.md
