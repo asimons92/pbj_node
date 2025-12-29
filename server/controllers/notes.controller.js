@@ -156,6 +156,38 @@ const getNotes = async (req,res) => {
     }
    
 }
+
+const getNoteById = async (req,res) => {
+    try {
+        const recordId = req.params.id;
+        console.log('Got recordId from req.params ' ,{recordId})
+        // Build query with permission check to prevent information disclosure
+        // Admins can see any record, users can only see their own
+        const query = { _id: recordId };
+        console.log('Building query object with recordId',{query})
+        if (req.user.role !== 'admin') {
+            query.createdBy = new mongoose.Types.ObjectId(req.user.id);
+            console.log('If not admin block hit')
+        }
+        
+        const record = await BehaviorRecord.findOne(query);
+        console.log('record value is ',{record}) // this is coming back null for an unauthorized user
+        // If record not found, it could be:
+        // 1. Record doesn't exist
+        // 2. Record exists but user doesn't have permission
+        // Return 404 for both to prevent enumeration attacks
+        if (!record) {
+            return res.status(404).json({ error: 'Record not found' });
+        }
+        
+        res.status(200).json({
+            record: record
+        });
+    } catch (error) {
+        console.error('Get note by ID error:', error.message);
+        res.status(500).json({ error: 'Failed to retrieve record.', detail: error.message });
+    }
+}
 const getMyNotes = async (req,res) => {
     const page = parseInt(req.query.page) || 1;     // parseInt turns str -> int. Req query will contain what page or default to 1
     const limit = parseInt(req.query.limit) || 10;  // how many per page, default 10
@@ -214,24 +246,25 @@ const deleteNote = async (req,res) => {
     try {
         const recordId = req.params.id;
         
-        // Find the record
-        const record = await BehaviorRecord.findById(recordId);
+        // Build query with permission check to prevent information disclosure
+        // Admins can delete any record, users can only delete their own
+        const query = { _id: recordId };
+        if (req.user.role !== 'admin') {
+            query.createdBy = new mongoose.Types.ObjectId(req.user.id);
+        }
         
-        // Check if record exists
+        const record = await BehaviorRecord.findOne(query);
+        
+        // If record not found, it could be:
+        // 1. Record doesn't exist
+        // 2. Record exists but user doesn't have permission
+        // Return 404 for both to prevent enumeration attacks
         if (!record) {
             return res.status(404).json({ error: 'Record not found' });
         }
         
-        // Check permissions: admin can delete any, users can only delete their own
-        const isOwner = record.createdBy && record.createdBy.toString() === req.user.id;
-        const isAdmin = req.user.role === 'admin';
-        
-        if (isOwner || isAdmin) {
-            await BehaviorRecord.findByIdAndDelete(recordId);
-            res.status(200).json({ message: 'Record deleted successfully' });
-        } else {
-            res.status(403).json({ error: 'Forbidden: You do not have permission to delete this note.' });
-        }
+        await BehaviorRecord.findByIdAndDelete(recordId);
+        res.status(200).json({ message: 'Record deleted successfully' });
     } catch (error) {
         console.error('Delete record error:', error.message);
         res.status(500).json({ error: 'Failed to delete record.', detail: error.message });
@@ -240,32 +273,38 @@ const deleteNote = async (req,res) => {
 
 const editNote = async (req,res) => {
     try {
-        const recordId = req.params.id; // what record was requested?
-        const record = await BehaviorRecord.findById(recordId); // find to check for existence
+        const recordId = req.params.id;
+        
+        // Build query with permission check to prevent information disclosure
+        // Admins can update any record, users can only update their own
+        const query = { _id: recordId };
+        if (req.user.role !== 'admin') {
+            query.createdBy = new mongoose.Types.ObjectId(req.user.id);
+        }
+        
+        const record = await BehaviorRecord.findOne(query);
+        
+        // If record not found, it could be:
+        // 1. Record doesn't exist
+        // 2. Record exists but user doesn't have permission
+        // Return 404 for both to prevent enumeration attacks
         if (!record) {
             return res.status(404).json({ error: 'Record not found' });
         }
-        // Check permissions: admin can update any, users can only update their own
-        const isOwner = record.createdBy && record.createdBy.toString() === req.user.id;
-        const isAdmin = req.user.role === 'admin';
-
-        if (isOwner || isAdmin) {
-            // Filter out protected fields that shouldn't be updated
-            const { createdBy, _id, originalText, source, createdAt, ...updateData } = req.body;
-            
-            // Update the record and return the updated document
-            const updatedRecord = await BehaviorRecord.findByIdAndUpdate(
-                recordId,
-                updateData,
-                { new: true, runValidators: true } // Return updated doc and run schema validators
-            );
-            res.status(200).json(updatedRecord);
-        } else {
-            res.status(403).json({ error: 'Forbidden: You do not have permission to edit this note.' });
-        }
+        
+        // Filter out protected fields that shouldn't be updated
+        const { createdBy, _id, originalText, source, createdAt, ...updateData } = req.body;
+        
+        // Update the record and return the updated document
+        const updatedRecord = await BehaviorRecord.findByIdAndUpdate(
+            recordId,
+            updateData,
+            { new: true, runValidators: true } // Return updated doc and run schema validators
+        );
+        return res.status(200).json(updatedRecord);
     } catch (error) {
         console.error('Edit record error:', error.message);
-        res.status(500).json({ error: 'Failed to update record.', detail: error.message });
+        return res.status(500).json({ error: 'Failed to update record.', detail: error.message });
     }
 }
 
@@ -275,7 +314,8 @@ module.exports = {
     getNotes,
     getMyNotes,
     deleteNote,
-    editNote
+    editNote,
+    getNoteById
     
 
 }
