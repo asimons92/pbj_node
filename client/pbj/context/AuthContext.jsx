@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import { isTokenExpired } from '../services/api';
+import { isTokenExpired } from '../services/apiClient';
 
 const AuthContext = createContext(null);
 

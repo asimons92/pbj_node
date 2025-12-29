@@ -1,5 +1,5 @@
 import { useAuth } from '../context/AuthContext.jsx'
-//import Login from './components/Login';
+import Login from '../components/Login.jsx';
 
 
 
@@ -10,8 +10,7 @@ function App() {
   if (!isAuthenticated()) {
     return (
       <div>
-        <h1>Login Here</h1>
-        <p>Login page placeholder - will be replaced with Login component</p>
+        <Login/>
       </div>
     );
   }
