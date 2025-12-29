@@ -238,12 +238,44 @@ const deleteNote = async (req,res) => {
     }
 }
 
+const editNote = async (req,res) => {
+    try {
+        const recordId = req.params.id; // what record was requested?
+        const record = await BehaviorRecord.findById(recordId); // find to check for existence
+        if (!record) {
+            return res.status(404).json({ error: 'Record not found' });
+        }
+        // Check permissions: admin can update any, users can only update their own
+        const isOwner = record.createdBy && record.createdBy.toString() === req.user.id;
+        const isAdmin = req.user.role === 'admin';
+
+        if (isOwner || isAdmin) {
+            // Filter out protected fields that shouldn't be updated
+            const { createdBy, _id, originalText, source, createdAt, ...updateData } = req.body;
+            
+            // Update the record and return the updated document
+            const updatedRecord = await BehaviorRecord.findByIdAndUpdate(
+                recordId,
+                updateData,
+                { new: true, runValidators: true } // Return updated doc and run schema validators
+            );
+            res.status(200).json(updatedRecord);
+        } else {
+            res.status(403).json({ error: 'Forbidden: You do not have permission to edit this note.' });
+        }
+    } catch (error) {
+        console.error('Edit record error:', error.message);
+        res.status(500).json({ error: 'Failed to update record.', detail: error.message });
+    }
+}
+
 module.exports = {
     testGet,
     postNote,
     getNotes,
     getMyNotes,
-    deleteNote
+    deleteNote,
+    editNote
     
 
 }

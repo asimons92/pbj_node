@@ -2,9 +2,19 @@ const { OpenAI } = require('openai');
 const z = require('zod'); // Zod for schema validation
 const { BEHAVIOR_RECORD_TOOL } = require('../utils/llmTools');
 
-const openai = new OpenAI({                 // make new openai instance called openai
-    apiKey: process.env.OPENAI_API_KEY      // use the API key found in .env
-});
+// Lazy initialization of OpenAI client to avoid errors on module load
+let openai = null;
+function getOpenAIClient() {
+    if (!openai) {
+        if (!process.env.OPENAI_API_KEY) {
+            throw new Error('OPENAI_API_KEY environment variable is not set');
+        }
+        openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY
+        });
+    }
+    return openai;
+}
 
 // define zod schema
 
@@ -47,7 +57,8 @@ const LlmOutputSchema = z.object({
 
 async function callOpenAIApi(notes) {                           // define function that will be called in controller
     try {
-        const response = await openai.chat.completions.create({
+        const client = getOpenAIClient();
+        const response = await client.chat.completions.create({
             model: "gpt-4o", // Use a model capable of tool calling
             messages: [
                 {
