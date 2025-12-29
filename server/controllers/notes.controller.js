@@ -2,6 +2,7 @@
 const { callLlmApi } = require('../services/llm_service');
 // Import BehaviorRecord model
 const BehaviorRecord = require('../models/BehaviorRecord.model');
+const mongoose = require('mongoose');
 
 // test controller logic to check auth in postman
 const testGet = async (req,res) => {
@@ -40,8 +41,9 @@ const postNote = async (req, res) => {
         const recordsToSave = llmData.records.map(record => ({
             originalText: originalText, // must keep original text for continuity and quality control
             ...record,               // unpack the record into individual fields
-            source: "teacher_note"   // the source from this path will always be an original teacher note
+            source: "teacher_note",   // the source from this path will always be an original teacher note
                                      // it could be "migration" or something in the future
+            createdBy: new mongoose.Types.ObjectId(req.user.id)      // save who made the note (convert string to ObjectId)
         }));
 
         //  --- SAVE THE RECORD TO THE DATABASE ---
@@ -105,8 +107,68 @@ const getNotes = async (req,res) => {
     const skip = (page-1) * limit;                  // how many records to skip based on page and limit
 
     try {
+        // Debug: log admin query
+        console.log('getNotes (admin) - Querying all records, page:', page);
+        
         const { student_name, category, severity } = req.query; // these values are from the req query. depends on frontend
         const filter = {}; // empty object to build filter object out of
+        if (student_name) {
+            filter.student_name = { $regex: student_name, $options: 'i'};   // mongoose regex to find matches, case insensitive
+        }
+        if (category) {
+            filter['behavior.category'] = category;  // add a category if there is one
+        }
+        if (severity) {
+            filter['behavior.severity'] = severity; // add a severity if there is one
+        }
+        const [records, totalCount] = await Promise.all([                   // promise the records, and how many
+            BehaviorRecord.find(filter).sort({ recording_timestamp: -1})    // find them based on filter object made above
+            .skip(skip)                                                     // sort by descending timestamp 
+            .limit(limit),
+            BehaviorRecord.countDocuments(filter)                           // how many returned
+        ]);
+
+        // Debug: log what was found
+        console.log('getNotes (admin) - Found', records.length, 'records out of', totalCount, 'total');
+        if (records.length > 0) {
+            console.log('Sample record createdBy:', records[0].createdBy);
+        }
+
+        const totalPages = Math.ceil(totalCount / limit);                   // how many pages
+        const hasNextPage = page < totalPages;                              // booleans say if we display buttons or not
+        const hasPrevPage = page > 1;
+
+        res.status(200).json({              // response JSON, good 200, pagination data
+            records: records,
+            pagination: {
+                currentPage: page,
+                totalPages: totalPages,
+                totalCount: totalCount,
+                limit: limit,
+                hasNextPage: hasNextPage,
+                hasPrevPage: hasPrevPage
+            }
+        });
+    } catch (error) {
+        console.error('Database retrieval error:',error.message);
+        res.status(500).json({ error: 'Failed to retrieve behavior records.', detail: error.message });
+
+    }
+   
+}
+const getMyNotes = async (req,res) => {
+    const page = parseInt(req.query.page) || 1;     // parseInt turns str -> int. Req query will contain what page or default to 1
+    const limit = parseInt(req.query.limit) || 10;  // how many per page, default 10
+    const skip = (page-1) * limit;                  // how many records to skip based on page and limit
+
+    try {
+        // Debug: log the user making the request
+        console.log('getMyNotes - User ID:', req.user.id, 'Role:', req.user.role);
+        
+        const { student_name, category, severity } = req.query; // these values are from the req query. depends on frontend
+        const filter = {
+            createdBy: new mongoose.Types.ObjectId(req.user.id)
+        }; 
         if (student_name) {
             filter.student_name = { $regex: student_name, $options: 'i'};   // mongoose regex to find matches, case insensitive
         }
@@ -145,11 +207,11 @@ const getNotes = async (req,res) => {
     }
    
 }
-
 module.exports = {
     testGet,
     postNote,
-    getNotes
+    getNotes,
+    getMyNotes
     
 
 }
