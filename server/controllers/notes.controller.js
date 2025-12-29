@@ -206,12 +206,44 @@ const getMyNotes = async (req,res) => {
 
     }
    
+
+
 }
+
+const deleteNote = async (req,res) => {
+    try {
+        const recordId = req.params.id;
+        
+        // Find the record
+        const record = await BehaviorRecord.findById(recordId);
+        
+        // Check if record exists
+        if (!record) {
+            return res.status(404).json({ error: 'Record not found' });
+        }
+        
+        // Check permissions: admin can delete any, users can only delete their own
+        const isOwner = record.createdBy && record.createdBy.toString() === req.user.id;
+        const isAdmin = req.user.role === 'admin';
+        
+        if (isOwner || isAdmin) {
+            await BehaviorRecord.findByIdAndDelete(recordId);
+            res.status(200).json({ message: 'Record deleted successfully' });
+        } else {
+            res.status(403).json({ error: 'Forbidden: You do not have permission to delete this note.' });
+        }
+    } catch (error) {
+        console.error('Delete record error:', error.message);
+        res.status(500).json({ error: 'Failed to delete record.', detail: error.message });
+    }
+}
+
 module.exports = {
     testGet,
     postNote,
     getNotes,
-    getMyNotes
+    getMyNotes,
+    deleteNote
     
 
 }
