@@ -2,8 +2,8 @@ const { OpenAI } = require('openai');
 const z = require('zod'); // Zod for schema validation
 const { BEHAVIOR_RECORD_TOOL } = require('../utils/llmTools');
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
+const openai = new OpenAI({                 // make new openai instance called openai
+    apiKey: process.env.OPENAI_API_KEY      // use the API key found in .env
 });
 
 // define zod schema
@@ -45,7 +45,7 @@ const LlmOutputSchema = z.object({
 
 
 
-async function callOpenAIApi(notes) {
+async function callOpenAIApi(notes) {                           // define function that will be called in controller
     try {
         const response = await openai.chat.completions.create({
             model: "gpt-4o", // Use a model capable of tool calling
@@ -74,22 +74,22 @@ Do not ever guess student_name or class_name, if this information is not explici
                     content: `Please process the following teacher note: "${notes}"`
                 }
             ],
-            tools: [BEHAVIOR_RECORD_TOOL], // Your tool definition
+            tools: [BEHAVIOR_RECORD_TOOL], //  Tool definition, ensures structured JSON output
             tool_choice: { type: "function", function: { name: "parse_behavior_record" } },
         });
-        const toolCall = response.choices[0].message.tool_calls[0];
-        if (!toolCall || toolCall.function.name !== "parse_behavior_record") {
+        const toolCall = response.choices[0].message.tool_calls[0]; // this is where the response lives 
+        if (!toolCall || toolCall.function.name !== "parse_behavior_record") { // if the above didn't find anything or its called the wrong thing
             throw new Error("LLM did not return a valid tool call for parsing.");
         }
         const jsonArgs = JSON.parse(toolCall.function.arguments);
 
-        const validatedData = LlmOutputSchema.parse(jsonArgs);
+        const validatedData = LlmOutputSchema.parse(jsonArgs); // run the results of parsing through zod schema
 
-        return validatedData;
+        return validatedData; // this should be an array of records
     } catch (error) {
         console.error("LLM Service Error during API call or validation:", error.message);
         // Re-throw the error so the controller can catch it and send a 500 response
-        throw new Error(`LLM processing failed: ${error.message}`);
+        throw new Error(`LLM processing failed: ${error.message}`); 
     }};
 
 

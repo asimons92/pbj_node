@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getUsers, login, register } = require('../controllers/auth.controller');
-const { auth } = require('../middleware/auth.middleware');
+const { auth, requireAdmin } = require('../middleware/auth.middleware');
 
 // Public routes (no auth required)
 
@@ -13,7 +13,9 @@ router.post('/register', register);
 
 // Protected routes (auth required)
 router.use(auth);
-router.get('/users', getUsers);
+
+// Admin-only routes
+router.get('/users', requireAdmin, getUsers);
 
 
 module.exports = router;
