@@ -1,5 +1,6 @@
 import { useAuth } from '../context/AuthContext.jsx'
 import Login from '../components/Login.jsx';
+import AddNote from '../components/AddNote.jsx';
 
 
 
@@ -16,10 +17,9 @@ function App() {
   }
 
   return (
-    <div>
-      <h1>Main App</h1>
-      <p>Main app placeholder - NavBar, RecordsDisplay, and NewRecord will go here</p>
-    </div>
+    // navbar
+    // dashboard
+    <AddNote/>
   );
 }
 
