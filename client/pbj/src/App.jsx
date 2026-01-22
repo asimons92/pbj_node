@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from '../components/Login.jsx';
 import AddNote from '../components/AddNote.jsx';
 import NavBar from '../components/NavBar.jsx';
+import Dashboard from '../components/Dashboard.jsx';
 import ProtectedRoute from '../components/ProtectedRoute.jsx';
 import './App.css';
 
@@ -17,10 +18,7 @@ function App() {
         element={
           <ProtectedRoute>
             <NavBar />
-            <div>
-              <h1>Dashboard</h1>
-              <p>Welcome to PBJ</p>
-            </div>
+            <Dashboard />
           </ProtectedRoute>
         }
       />
