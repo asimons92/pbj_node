@@ -26,14 +26,16 @@ export default function AddNote(){
     const [teacherNote, setTeacherNote] = useState('');
     const [parsedNote, setParsedNote] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isParsing, setIsParsing] = useState(false);
 
     const handleAddNote = async (e) => {
         e.preventDefault();
         setErrorMessage('')
         
         // use apiclient to send POST to backend with teacherNote
-        
+        setIsParsing(true);
         try {
+            
             const response = await apiClient.post('/records',{teacherNotes: teacherNote});
             console.log('Note submitted: ',teacherNote);
             console.log('Axios response: ',response)
@@ -45,6 +47,8 @@ export default function AddNote(){
             } else {
                 setErrorMessage(error.message);
             }
+        } finally {
+            setIsParsing(false);
         }
 
     }
@@ -63,6 +67,12 @@ export default function AddNote(){
                 <button className='submit-button' type='submit'>Submit</button>
             </form>
         </div>
+        {isParsing && (
+                <div className="parsing-overlay">
+                    <div className="spinner"></div>
+                    <p>Parsing notes with AI...</p>
+                </div>
+)}
         {parsedNote && 
                 <div className='response-display'>
                 <h1>Parsed Note</h1>

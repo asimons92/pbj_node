@@ -22,7 +22,7 @@ export default function NavBar() {
         </Link>
       </div>
       <div className='navbar-center'>
-        <p>Hello, {user?.email || 'User'}</p>
+        <p>Hello, {user?.username || 'User'}</p>
       </div>
       <div className='navbar-right'>
         <Link to="/add-note" className = "nav-link" >Add Note</Link>
