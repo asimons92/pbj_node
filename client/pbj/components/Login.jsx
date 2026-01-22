@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import apiClient from '../services/apiClient';
 
 
 export default function Login() {
-    const { login } = useAuth();
+    const { login, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+    
+    // Redirect if already authenticated
+    useEffect(() => {
+        if (isAuthenticated()) {
+            navigate('/');
+        }
+    }, [isAuthenticated, navigate]);
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
     const [error,setError] = useState('')
@@ -29,6 +38,7 @@ export default function Login() {
             const token = response.data.token
 
             login(token)
+            navigate('/'); // Redirect to dashboard after successful login
 
 
         } catch (error) {

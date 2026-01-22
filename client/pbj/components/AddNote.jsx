@@ -53,7 +53,8 @@ export default function AddNote(){
     return(
         <>
         <div className='note-submit-div'>
-            <form onSubmit={ handleAddNote }> 
+            <h1>Submit a Note</h1>
+            <form className='note-submit-form' onSubmit={ handleAddNote }> 
                 <input
                     type="text"
                     value={ teacherNote }
