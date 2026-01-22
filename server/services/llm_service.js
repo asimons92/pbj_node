@@ -58,7 +58,7 @@ const LlmOutputSchema = z.object({
 async function callOpenAIApi(notes) {                           // define function that will be called in controller
     try {
         const client = getOpenAIClient();
-        const response = await client.chat.completions.create({
+        const response = await client.chat.completions.create({ // change by agent, check back later
             model: "gpt-4o", // Use a model capable of tool calling
             messages: [
                 {

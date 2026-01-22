@@ -45,8 +45,8 @@ export default function Login() {
 
 
     return(
-        <div>
-            <form onSubmit={ handleSubmit }>
+        <div className='login-div'>
+            <form className='login-form' onSubmit={ handleSubmit }>
                 <input
                     type="email"
                     value={ email }
@@ -57,10 +57,10 @@ export default function Login() {
                     value={ password }
                     onChange={ (e) => setPassword(e.target.value) }
                 />
-                <button type='submit'>Login</button>
+                <button className='login-submit-button' type='submit'>Login</button>
             </form>
             { error && (
-                <div>Login error: {error} </div>
+                <div className='error-div'>Login error: {error} </div>
             )}
         </div>
         
