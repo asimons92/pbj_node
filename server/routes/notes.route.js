@@ -11,8 +11,9 @@ router.get('/',testGet);
 // Protected routes (auth required)
 router.use(auth);
 router.post('/records',postNote)
-router.get('/records/:id',getNoteById)
+// IMPORTANT: More specific routes must come before parameterized routes
 router.get('/records/my', getMyNotes)
+router.get('/records/:id',getNoteById)
 router.delete('/records/:id', deleteNote)
 router.put('/records/:id',editNote);
 

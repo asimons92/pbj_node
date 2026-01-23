@@ -60,6 +60,7 @@ export default function AddNote(){
             <h1>Submit a Note</h1>
             <form className='note-submit-form' onSubmit={ handleAddNote }> 
                 <input
+                    className='note-submit-input'
                     type="text"
                     value={ teacherNote }
                     onChange={ (e) => setTeacherNote(e.target.value) }
