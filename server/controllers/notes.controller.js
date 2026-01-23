@@ -30,9 +30,11 @@ const postNote = async (req, res) => {
 
         //  --- CALL THE LLM SERVICE FIRST ---
         console.log('Calling LLM API for notes.');
+        // Generate the recording timestamp (when the note is being processed/recorded)
+        const recordingTimestamp = new Date();
         // We need to wait for the structured data from the service
         // llmData should be an array of record objects, see llm_service.js
-        const llmData = await callLlmApi(originalText); 
+        const llmData = await callLlmApi(originalText, recordingTimestamp); 
         // if there's nothing in the response, throw a 400 error
         if (!llmData.records) {
             return res.status(400).json({ error: 'Empty array in res body'})

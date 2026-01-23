@@ -55,9 +55,11 @@ const LlmOutputSchema = z.object({
 
 
 
-async function callOpenAIApi(notes) {                           // define function that will be called in controller
+async function callOpenAIApi(notes, recordingTimestamp) {                           // define function that will be called in controller
     try {
         const client = getOpenAIClient();
+        // Format the timestamp as ISO string for the LLM
+        const timestampISO = recordingTimestamp.toISOString();
         const response = await client.chat.completions.create({ // change by agent, check back later
             model: "gpt-4o", // Use a model capable of tool calling
             messages: [
@@ -77,12 +79,16 @@ Always include the needs_followup in the behavior record.
 Always include the student_name in the behavior record.
 Always include the student_id in the behavior record.
 Always include the recording_timestamp in the behavior record.
+Do not hallucinate the behavior date. If it is not explicitly mentioned, do not try to guess. 
 If the behavior_date is not explicitly mentioned in the note, use the recording_timestamp as the behavior_date.
 Do not ever guess student_name or class_name, if this information is not explicitly mentioned in the note just return an empty string.` 
                 },
                 {
                     role: "user",
-                    content: `Please process the following teacher note: "${notes}"`
+                    content: `Please process the following teacher note: "${notes}"
+
+The recording_timestamp for this note is: ${timestampISO}
+Use this exact timestamp value for the recording_timestamp field in the behavior record.`
                 }
             ],
             tools: [BEHAVIOR_RECORD_TOOL], //  Tool definition, ensures structured JSON output

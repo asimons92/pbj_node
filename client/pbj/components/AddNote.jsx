@@ -38,7 +38,7 @@ export default function AddNote(){
             
             const response = await apiClient.post('/records',{teacherNotes: teacherNote});
             console.log('Note submitted: ',teacherNote);
-            console.log('Axios response: ',response)
+            console.log('Axios response: ',response);
             setParsedNote(response.data);
         } catch (error) {
             console.log('Hit catch error block of AddNote component: handleAddNote');
@@ -75,11 +75,33 @@ export default function AddNote(){
                 </div>
 )}
         {parsedNote && 
-                <div className='response-display'>
+            <div className='response-display'>
                 <h1>Parsed Note</h1>
                 <pre>
                     {JSON.stringify(parsedNote,null,2)}
                 </pre>
+
+                <div className='records-list'>
+                    {parsedNote.map((record) => {
+                        const behavior = record.behavior || {};
+                        const context = record.context || {};
+                        const intervention = record.intervention || {};
+
+                        return(
+                            <div key={record._id} className='record-card'>
+                                <div
+                                    className='record-card-header'
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <div className='record-card-main'>
+                                        <h3>{record.student_name</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+
             </div>
         }
         </>
