@@ -48,7 +48,7 @@ export default function Dashboard(){
         setExpandedRecordId(expandedRecordId === recordId ? null : recordId);
     }
 
-    const formatDate = (dateString) => {
+    const formatDate = (dateString) => { // maybe factor out for reuse
         if (!dateString) return 'N/A';
         return new Date(dateString).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -57,7 +57,7 @@ export default function Dashboard(){
         });
     }
 
-    const getSeverityColor = (severity) => {
+    const getSeverityColor = (severity) => { //maybe factor out for reuse
         switch(severity) {
             case 'high': return '#dc3545';
             case 'moderate': return '#ffc107';

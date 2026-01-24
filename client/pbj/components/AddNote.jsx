@@ -28,6 +28,24 @@ export default function AddNote(){
     const [errorMessage, setErrorMessage] = useState('');
     const [isParsing, setIsParsing] = useState(false);
 
+    const formatDate = (dateString) => { // maybe factor out for reuse
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    const getSeverityColor = (severity) => {
+        switch(severity) {
+            case 'high': return '#dc3545';
+            case 'moderate': return '#ffc107';
+            case 'low': return '#28a745';
+            default: return '#6c757d';
+        }
+    }
+
     const handleAddNote = async (e) => {
         e.preventDefault();
         setErrorMessage('')
@@ -77,16 +95,13 @@ export default function AddNote(){
         {parsedNote && 
             <div className='response-display'>
                 <h1>Parsed Note</h1>
-                <pre>
-                    {JSON.stringify(parsedNote,null,2)}
-                </pre>
 
                 <div className='records-list'>
                     {parsedNote.map((record) => {
                         const behavior = record.behavior || {};
                         const context = record.context || {};
                         const intervention = record.intervention || {};
-
+                        // maybe make record cards themselves into components?
                         return(
                             <div key={record._id} className='record-card'>
                                 <div
@@ -94,7 +109,56 @@ export default function AddNote(){
                                     style={{ cursor: 'pointer' }}
                                 >
                                     <div className='record-card-main'>
-                                        <h3>{record.student_name</h3>
+                                        <h3>{record.student_name}</h3>
+                                        <span className='record-date'>{formatDate(record.behavior_date || record.recording_timestamp)}</span>
+                                    </div>
+                                    <div className='record-card-badges'>
+                                            <span 
+                                                className='severity-badge'
+                                                style={{ backgroundColor: getSeverityColor(behavior.severity) }}
+                                            >
+                                                {behavior.severity || 'N/A'}
+                                            </span>
+                                            <span className='category-badge'>
+                                                {behavior.category || 'N/A'}
+                                            </span>
+                                            {behavior.is_positive && (
+                                                <span className='positive-badge'>Positive</span>
+                                            )}
+                                            {behavior.needs_followup && (
+                                                <span className='followup-badge'>Follow-up</span>
+                                            )}
+                                    </div>
+                                    <div className='record-card-details'>
+                                            <div className='detail-section'>
+                                            <h4>Behavior Details</h4>
+                                                <p><strong>Description:</strong> {behavior.description || 'N/A'}</p>
+                                                {behavior.tags && behavior.tags.length > 0 && (
+                                                    <p><strong>Tags:</strong> {behavior.tags.join(', ')}</p>
+                                                )}
+                                            </div>
+                                            {(context.class_name || context.teacher || context.activity) && (
+                                                <div className='detail-section'>
+                                                    <h4>Context</h4>
+                                                    {context.class_name && <p><strong>Class:</strong> {context.class_name}</p>}
+                                                    {context.teacher && <p><strong>Teacher:</strong> {context.teacher}</p>}
+                                                    {context.activity && <p><strong>Activity:</strong> {context.activity}</p>}
+                                                    {context.location && <p><strong>Location:</strong> {context.location}</p>}
+                                                </div>
+                                            )}
+                                            {intervention.status && intervention.status !== 'none' && (
+                                                <div className='detail-section'>
+                                                    <h4>Intervention</h4>
+                                                    <p><strong>Status:</strong> {intervention.status}</p>
+                                                    {intervention.type && <p><strong>Type:</strong> {intervention.type}</p>}
+                                                    {intervention.tier && <p><strong>Tier:</strong> {intervention.tier}</p>}
+                                                    {intervention.notes && <p><strong>Notes:</strong> {intervention.notes}</p>}
+                                                </div>
+                                            )}
+                                            <div className='detail-section'>
+                                                <h4>Original Note</h4>
+                                                <p className='original-text'>{record.originalText}</p>
+                                            </div>
                                     </div>
                                 </div>
                             </div>
