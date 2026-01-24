@@ -1,5 +1,7 @@
 // Import LLM service (matches `services/llm_service.js`)
 const { callLlmApi } = require('../services/llm_service');
+// Import redaction service
+const { redactText, deanonymizeObject } = require('../services/redaction_service');
 // Import BehaviorRecord model
 const BehaviorRecord = require('../models/BehaviorRecord.model');
 const mongoose = require('mongoose');
@@ -28,19 +30,39 @@ const postNote = async (req, res) => {
     // try block
     try {
 
-        //  --- CALL THE LLM SERVICE FIRST ---
+        //  --- REDACT NAMES BEFORE SENDING TO LLM ---
+        console.log('Redacting names before LLM processing.');
+        let redactedText = originalText;
+        let nameMapping = {};
+        
+        try {
+            const redactionResult = await redactText(originalText);
+            redactedText = redactionResult.redacted_text;
+            nameMapping = redactionResult.name_mapping;
+            console.log(`Redacted ${Object.keys(nameMapping).length} unique person(s) in text.`);
+        } catch (redactionError) {
+            console.warn('Redaction service unavailable, proceeding without redaction:', redactionError.message);
+            // Continue without redaction if service is down (graceful degradation)
+        }
+
+        //  --- CALL THE LLM SERVICE WITH REDACTED TEXT ---
         console.log('Calling LLM API for notes.');
         // Generate the recording timestamp (when the note is being processed/recorded)
         const recordingTimestamp = new Date();
         // We need to wait for the structured data from the service
         // llmData should be an array of record objects, see llm_service.js
-        const llmData = await callLlmApi(originalText, recordingTimestamp); 
+        const llmData = await callLlmApi(redactedText, recordingTimestamp); 
         // if there's nothing in the response, throw a 400 error
         if (!llmData.records) {
             return res.status(400).json({ error: 'Empty array in res body'})
         }
+        
+        //  --- DE-ANONYMIZE LLM RESPONSE BEFORE SAVING TO DB ---
+        console.log('De-anonymizing LLM response.');
+        const deanonymizedData = deanonymizeObject(llmData, nameMapping);
+        
         // set up the records for database storage
-        const recordsToSave = llmData.records.map(record => ({
+        const recordsToSave = deanonymizedData.records.map(record => ({
             originalText: originalText, // must keep original text for continuity and quality control
             ...record,               // unpack the record into individual fields
             source: "teacher_note",   // the source from this path will always be an original teacher note
