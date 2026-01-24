@@ -87,7 +87,7 @@ body {
 }
 
 .parsing-overlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -122,7 +122,9 @@ body {
 }
 
 .records-div {
+  height: 100%;
   padding: 0 2rem 2rem;
+  position: relative; /* Allow overlay to position relative to this container */
 }
 
 .error-message {
@@ -139,6 +141,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-height: 400px; /* Prevent layout shift during loading */
 }
 
 .record-card {
@@ -273,6 +276,38 @@ body {
   color: #666;
   white-space: pre-wrap;
   word-wrap: break-word;
+}
+
+/* Editable Record Cards (for AddNote/HIL verification) */
+.record-card--editable {
+  border: 2px solid #ffc107;
+  background: #fffef5;
+}
+
+.record-card--editable:hover {
+  border-color: #ff9800;
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
+}
+
+.record-card--editable .record-card-header {
+  border-bottom: 2px solid #ffc107;
+  background: linear-gradient(to right, #fffef5, #fff);
+}
+
+.record-card--editable .record-card-details {
+  background-color: #fff;
+  border-top: 2px solid #ffc107;
+}
+
+/* Response display container for parsed notes */
+.response-display {
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.response-display h1 {
+  margin-bottom: 1.5rem;
+  color: #333;
 }
 
 

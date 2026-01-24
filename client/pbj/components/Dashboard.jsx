@@ -7,6 +7,7 @@ export default function Dashboard(){
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] =  useState(false);
     const [records, setRecords] = useState([]);
+    const [displayedRecords, setDisplayedRecords] = useState([]); // Records shown in UI (prevents flicker)
     const [expandedRecordId, setExpandedRecordId] = useState(null);
     const [page,setPage] = useState(1);
     const limit = 5;
@@ -31,11 +32,14 @@ export default function Dashboard(){
             setHasNextPage(response.data.pagination.hasNextPage);
             setTotalPages(response.data.pagination.totalPages);
             const recordsData = response.data.records || response.data;
-            setRecords(Array.isArray(recordsData) ? recordsData : []);
+            const newRecords = Array.isArray(recordsData) ? recordsData : [];
+            
+            // Store new records but don't display them yet
+            setRecords(newRecords);
+            setLoading(false);
         } catch (error) {
             setErrorMessage(error.response?.data?.error || 'Failed to load records');
             console.error('Error loading records:', error);
-        } finally {
             setLoading(false);
         }
     }
@@ -43,6 +47,13 @@ export default function Dashboard(){
     useEffect(() => {
         loadRecords(page,limit);
     }, [page]);
+
+    // Update displayed records only after loading completes to prevent flicker
+    useEffect(() => {
+        if (!loading && records.length >= 0) {
+            setDisplayedRecords(records);
+        }
+    }, [loading, records]);
 
     const toggleExpand = (recordId) => {
         setExpandedRecordId(expandedRecordId === recordId ? null : recordId);
@@ -66,6 +77,8 @@ export default function Dashboard(){
         }
     }
 
+    
+
     const handleNextPage = () => {
         setPage(prev => prev + 1)
     };
@@ -84,16 +97,22 @@ export default function Dashboard(){
                 <p>This is where the datadashboard will live</p>
             </div>
             <div className='records-div'>
-                {loading && <p>Loading records...</p>}
                 {errorMessage && <p className='error-message'>{errorMessage}</p>}
                 
-                {!loading && !errorMessage && records.length === 0 && (
+                {!errorMessage && !loading && displayedRecords.length === 0 && (
                     <p>No records found. Start by adding a note!</p>
                 )}
 
-                {!loading && !errorMessage && records.length > 0 && (
+                {loading && (  // make reusable general loading 
+                    <div className="parsing-overlay">
+                        <div className="spinner"></div>
+                        <p>Loading...</p>
+                    </div>
+                 )}
+
+                {!errorMessage && (displayedRecords.length > 0 || loading) && (
                     <div className='records-list'>
-                        {records.map((record) => {
+                        {displayedRecords.map((record) => {
                             const isExpanded = expandedRecordId === record._id;
                             const behavior = record.behavior || {};
                             const context = record.context || {};

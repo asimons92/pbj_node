@@ -86,12 +86,12 @@ export default function AddNote(){
                 <button className='submit-button' type='submit'>Submit</button>
             </form>
         </div>
-        {isParsing && (
+        {isParsing && (  // make reusable general loading 
                 <div className="parsing-overlay">
                     <div className="spinner"></div>
                     <p>Parsing notes with AI...</p>
                 </div>
-)}
+        )}
         {parsedNote && 
             <div className='response-display'>
                 <h1>Parsed Note</h1>
@@ -103,7 +103,7 @@ export default function AddNote(){
                         const intervention = record.intervention || {};
                         // maybe make record cards themselves into components?
                         return(
-                            <div key={record._id} className='record-card'>
+                            <div key={record._id} className='record-card record-card--editable'>
                                 <div
                                     className='record-card-header'
                                     style={{ cursor: 'pointer' }}
