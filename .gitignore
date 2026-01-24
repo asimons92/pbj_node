@@ -86,3 +86,7 @@ auth.controller.md
 
 #guides foler
 guides/
+
+# venv
+.venv/
+venv/
