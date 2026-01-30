@@ -7,7 +7,9 @@
     "dev": "nodemon server/index.js",
     "dev:server": "nodemon server/index.js",
     "dev:client": "cd client/pbj && npm run dev",
-    "dev:all": "concurrently \"npm run dev:server\" \"npm run dev:client\" --names \"SERVER,CLIENT\" --prefix-colors \"blue,green\""
+    "setup:redaction": "cd server/services/redaction && if [ -d venv ]; then source venv/bin/activate && pip install -r requirements.txt; else python3 -m pip install -r requirements.txt; fi",
+    "dev:redaction": "cd server/services/redaction && if [ -f venv/bin/python ]; then venv/bin/python -m uvicorn main:app --reload --port 8000; else python3 -m uvicorn main:app --reload --port 8000; fi",
+    "dev:all": "concurrently \"npm run dev:server\" \"npm run dev:client\" \"npm run dev:redaction\" --names \"SERVER,CLIENT,REDACTION\" --prefix-colors \"blue,green,yellow\""
   },
   "keywords": [],
   "author": "",
