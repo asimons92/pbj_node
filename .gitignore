@@ -90,3 +90,6 @@ guides/
 # venv
 .venv/
 venv/
+
+#roster
+p1roster.csv
