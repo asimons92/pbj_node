@@ -19,6 +19,10 @@ const StudentSchema = new Schema({
         minlength: 1,
         index: true  // Good for searching by last name
     },
+    nickName: {
+        type: String,
+        minLength: 1
+    },
     studentId: {
         type: Number,
         required: true,

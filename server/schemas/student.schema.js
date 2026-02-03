@@ -4,6 +4,7 @@ const StudentBaseSchema = z.object({
     fullName: z.string().min(1),              // Source of truth - original from roster
     firstName: z.string().min(1),             // Parsed: first token
     lastName: z.string().min(1),              // Parsed: last token
+    nickName: z.string().min(1).optional(),
     studentId: z.number().int().gte(1000000).lte(9999999),
     grade: z.number().int().min(9).max(12).optional(),
     gender: z.enum(['Male', 'Female', '']).optional()  // Some rows have empty gender
