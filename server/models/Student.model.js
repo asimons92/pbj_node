@@ -38,6 +38,12 @@ const StudentSchema = new Schema({
     gender: {
         type: String,
         enum: ['Male', 'Female', '']
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true, 
+        index: true
     }
 }, { timestamps: true });
 
