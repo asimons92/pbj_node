@@ -7,9 +7,14 @@ const getAllStudents = async (req,res) => {
     const limit = parseInt(req.query.limit) || 36;  // how many per page, default 36
     const skip = (page-1) * limit;                  // how many students to skip based on page and limit
     
+    if (!req.user?.id) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     try {
+
         // could put filter object here later from req
-        const filter = { createdBy: req.user._id };
+        const filter = { createdBy: req.user.id };
         const [students, totalCount] = await Promise.all([
             Student.find(filter).sort({ lastName: 1})
             .skip(skip)
@@ -20,6 +25,10 @@ const getAllStudents = async (req,res) => {
         const totalPages = Math.ceil(totalCount / limit);                   // how many pages
         const hasNextPage = page < totalPages;                              // booleans say if we display buttons or not
         const hasPrevPage = page > 1;
+
+        console.log('req.user:', req.user);
+        console.log('req.user._id:', req.user.id);
+        console.log('Filter:', filter);
 
         res.status(200).json({
             students: students,

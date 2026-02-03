@@ -5,11 +5,11 @@ const { auth, requireAdmin } = require('../middleware/auth.middleware');
 
 router.use(auth);
 router.get('/my',getAllStudents);
-router.get('/api/students/:id');
-router.post('/api/students');
-router.post('/api/students/my')
-router.put('/api/students/:id');
-router.delete('/api/students/:id');
+//router.get('/:id');
+//router.post('/');
+//router.post('/my')
+//router.put('/:id');
+//router.delete('/:id');
 
 
 module.exports = router;
