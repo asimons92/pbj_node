@@ -37,3 +37,8 @@ const getAllStudents = async (req,res) => {
         res.status(500).json({ error: 'Failed to retrieve students.', detail: error.message });
     }
 }
+
+
+module.exports = {
+    getAllStudents
+}
