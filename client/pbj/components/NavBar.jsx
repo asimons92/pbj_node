@@ -26,6 +26,7 @@ export default function NavBar() {
       </div>
       <div className='navbar-right'>
         <Link to="/add-note" className = "nav-link" >Add Note</Link>
+        <Link to="/roster" className = "nav-link">Roster</Link>
         <button onClick={handleLogout}>Logout</button>
       </div>
     </nav>
