@@ -8,7 +8,7 @@ export default function Roster() {
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] =  useState(false);
     const [page, setPage] = useState(1);
-    const limit = 5;
+    const limit = 25;
     const [hasPrevPage, setHasPrevPage] = useState(false);
     const [hasNextPage, setHasNextPage] = useState(true);
     const [totalPages, setTotalPages] = useState(1);
@@ -63,6 +63,16 @@ export default function Roster() {
     return (
         <>
         <h1>This is where the Roster logic will live.</h1>
+        <div className="students-list">
+            {displayedStudents.map((student) => {
+                return(
+                    <div key={ student._id }>
+                        <p>{ student.fullName}</p>
+                        <p>{ student.studentId}</p>
+                    </div>
+                )
+            })}
+        </div>
         </>
     )
 }
