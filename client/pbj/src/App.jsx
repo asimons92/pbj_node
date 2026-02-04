@@ -1,10 +1,12 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import Roster from '../components/Roster.jsx';
 import Login from '../components/Login.jsx';
 import AddNote from '../components/AddNote.jsx';
 import NavBar from '../components/NavBar.jsx';
 import Dashboard from '../components/Dashboard.jsx';
 import ProtectedRoute from '../components/ProtectedRoute.jsx';
 import './App.css';
+
 
 function App() {
   return (
@@ -31,7 +33,17 @@ function App() {
           </ProtectedRoute>
         }
       />
-      
+      <Route
+            path="/roster"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+                <Roster />
+              </ProtectedRoute>
+            }
+      />
+
+        
       {/* Catch all - redirect to home if authenticated, login if not */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

@@ -26,14 +26,14 @@ app.use(express.json())
 
 
 // Import route files
-const apiRouter = require('./routes/notes.route');
+const notesRouter = require('./routes/notes.route');
 const authRouter = require('./routes/auth.route');
 const studentsRouter = require('./routes/students.route');
 
 
 // Set up route paths
 app.use('/api/auth', authRouter);
-app.use('/api', apiRouter);
+app.use('/api/notes', notesRouter);
 app.use('/api/students', studentsRouter);
 
 

@@ -22,7 +22,7 @@ export default function Dashboard(){
         setLoading(true);
 
         try {
-            const response = await apiClient.get('/records/my', {
+            const response = await apiClient.get('/notes/my', {
                 params: {
                     page: page,
                     limit: limit

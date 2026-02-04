@@ -10,16 +10,16 @@ router.get('/',testGet);
 
 // Protected routes (auth required)
 router.use(auth);
-router.post('/records',postNote)
+router.post('/',postNote)
 // IMPORTANT: More specific routes must come before parameterized routes
-router.get('/records/my', getMyNotes)
-router.get('/records/:id',getNoteById)
-router.delete('/records/:id', deleteNote)
-router.put('/records/:id',editNote);
+router.get('/my', getMyNotes)
+router.get('/:id',getNoteById)
+router.delete('/:id', deleteNote)
+router.put('/:id',editNote);
 
 // Admin only routes
 // Not limited to users own notes
-router.get('/records', requireAdmin, getNotes);
+router.get('/', requireAdmin, getNotes);
 
 
 

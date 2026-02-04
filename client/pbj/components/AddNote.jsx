@@ -54,7 +54,7 @@ export default function AddNote(){
         setIsParsing(true);
         try {
             
-            const response = await apiClient.post('/records',{teacherNotes: teacherNote});
+            const response = await apiClient.post('/notes',{teacherNotes: teacherNote});
             console.log('Note submitted: ',teacherNote);
             console.log('Axios response: ',response);
             setParsedNote(response.data);
