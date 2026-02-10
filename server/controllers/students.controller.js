@@ -1,4 +1,7 @@
 const Student = require('../models/Student.model');
+const parseStudentCSV = require('../services/csv.service');
+
+
 
 
 
@@ -47,9 +50,42 @@ const getAllStudents = async (req,res) => {
     }
 }
 
+const uploadStudents = async (req,res) => {
+    const roster = "./services/p1roster.csv"
+    try {
+        const { results, failed } = await parseStudentCSV(roster);
 
+        for (const student of results){
+            student.createdBy = req.user.id;
+        }
+
+        const operations = results.map(student => ({
+            updateOne: {
+                filter: { studentId: student.studentId},
+                update: { $set: student},
+                upsert: true
+            }
+
+        }));
+
+        const result = await Student.bulkWrite(operations);
+        console.log('Bulk write complete:', result);
+        
+        res.status(200).json({
+            // How many students were inserted/updated
+            inserted: result.upsertedCount,
+            updated: result.modifiedCount,
+            failed: failed.length
+        })
+    } catch (error) {
+        console.error('CSV Upload Error', error.message);
+        res.status(500).json({ error: 'Failed to parse roster CSV.', detail: error.message});
+    }
+    
+}
 
 
 module.exports = {
-    getAllStudents
+    getAllStudents,
+    uploadStudents
 }
