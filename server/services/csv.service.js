@@ -35,10 +35,12 @@ function parseStudentCSV(filePath) {
         })
         .on('end', () => {
             // done
+            resolve({ results, failed })
             
         })
         .on('error', (err) => {
             // error
+            reject(err)
         })
     })
 }
