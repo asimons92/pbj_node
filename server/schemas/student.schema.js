@@ -8,7 +8,7 @@ const StudentBaseSchema = z.object({
     studentId: z.number().int().gte(1000000).lte(9999999),
     grade: z.number().int().min(9).max(12).optional(),
     gender: z.enum(['Male', 'Female', '']).optional(),  // Some rows have empty gender
-    teacherId: z.string()
+    teacherId: z.string().optional() // Added by controller from auth, not from CSV
     // connect to class object later. Not for MVP
 });
 
