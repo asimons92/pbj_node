@@ -6,6 +6,7 @@ import NavBar from '../components/NavBar.jsx';
 import Dashboard from '../components/Dashboard.jsx';
 import ProtectedRoute from '../components/ProtectedRoute.jsx';
 import './App.css';
+import RosterUpload from '../components/RosterUpload.jsx';
 
 
 function App() {
@@ -39,6 +40,15 @@ function App() {
               <ProtectedRoute>
                 <NavBar />
                 <Roster />
+              </ProtectedRoute>
+            }
+      />
+      <Route
+            path="/roster/upload"
+            element={
+              <ProtectedRoute>
+                <NavBar />
+                <RosterUpload />
               </ProtectedRoute>
             }
       />
