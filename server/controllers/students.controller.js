@@ -51,7 +51,7 @@ const getAllStudents = async (req,res) => {
 }
 
 const uploadStudents = async (req,res) => {
-    const roster = "./services/p1roster.csv"
+    const roster = req.file.path;
     try {
         const { results, failed } = await parseStudentCSV(roster);
 

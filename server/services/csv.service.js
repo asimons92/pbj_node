@@ -14,7 +14,7 @@ function parseStudentCSV(filePath) {
         fs.createReadStream(filePath)
         .pipe(csv({ skipLines: 6}))
         .on('data', (row) => {
-            console.log('Raw Row:', row);
+            //console.log('Raw Row:', row);
             const { fullName, firstName, lastName} = parseFullName(row['First Middle Last']);
             const student = {
                 fullName: fullName,
@@ -24,7 +24,7 @@ function parseStudentCSV(filePath) {
                 grade: parseInt(row['Grade']),
                 gender: row['Gender']
             };
-            console.log("Student before validation",student)
+            //console.log("Student before validation",student)
             const result = StudentBaseSchema.safeParse(student);
             if (result.success) {
                 const validatedStudent = result.data;
