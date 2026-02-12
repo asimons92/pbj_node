@@ -69,7 +69,7 @@ const uploadStudents = async (req,res) => {
         }));
 
         const result = await Student.bulkWrite(operations);
-        console.log('Bulk write complete:', result);
+        //console.log('Bulk write complete:', result);
         
         res.status(200).json({
             // How many students were inserted/updated
@@ -78,7 +78,7 @@ const uploadStudents = async (req,res) => {
             failed: failed.length
         })
     } catch (error) {
-        console.error('CSV Upload Error', error.message);
+        //console.error('CSV Upload Error', error.message);
         res.status(500).json({ error: 'Failed to parse roster CSV.', detail: error.message});
     }
     
