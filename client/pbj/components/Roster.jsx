@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import apiClient from '../services/apiClient';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Roster() {
 
@@ -62,7 +63,13 @@ export default function Roster() {
 
     return (
         <>
-        <h1>This is where the Roster logic will live.</h1>
+        <div className="roster-header-div">
+            <h3>Students</h3>
+            <Link to="/roster/upload">
+                <p>Upload Roster CSV</p>
+            </Link>
+        </div>
+
         <div className="students-list">
             {displayedStudents.map((student) => {
                 return(

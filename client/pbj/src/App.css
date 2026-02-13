@@ -365,3 +365,36 @@ body {
   transition: background-color 0.25s ease;
 }
 
+.roster-header-div {
+  display: flex;
+  justify-content: space-around;
+}
+
+.students-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin: 2rem auto;
+  max-width: 500px;
+  background: var(--color-primary);
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0px 3px 18px rgba(25, 75, 120, 0.06);
+}
+
+.students-list > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e8f4fe;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #c3e0e7;
+  font-size: 1.2rem;
+}
+
+.students-list > div p {
+  margin: 0.2rem 1.1rem 0.2rem 0;
+  color: #1b4771;
+}
+
