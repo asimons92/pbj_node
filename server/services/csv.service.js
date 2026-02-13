@@ -15,24 +15,29 @@ function parseStudentCSV(filePath) {
         .pipe(csv({ skipLines: 6}))
         .on('data', (row) => {
             //console.log('Raw Row:', row);
-            const { fullName, firstName, lastName} = parseFullName(row['First Middle Last']);
-            const student = {
-                fullName: fullName,
-                firstName: firstName,
-                lastName: lastName,
-                studentId: parseInt(row['Student ID']),
-                grade: parseInt(row['Grade']),
-                gender: row['Gender']
-            };
-            //console.log("Student before validation",student)
-            const result = StudentBaseSchema.safeParse(student);
-            if (result.success) {
-                const validatedStudent = result.data;
-                results.push(validatedStudent);
-            } else {
-                const failedStudent = {Student: result.data, Error: result.error}
-                failed.push(failedStudent);
+            try {
+                const { fullName, firstName, lastName} = parseFullName(row['First Middle Last']);
+                const student = {
+                    fullName: fullName,
+                    firstName: firstName,
+                    lastName: lastName,
+                    studentId: parseInt(row['Student ID']),
+                    grade: parseInt(row['Grade']),
+                    gender: row['Gender']
+                };
+                //console.log("Student before validation",student)
+                const result = StudentBaseSchema.safeParse(student);
+                if (result.success) {
+                    const validatedStudent = result.data;
+                    results.push(validatedStudent);
+                } else {
+                    const failedStudent = {Student: result.data, Error: result.error}
+                    failed.push(failedStudent);
+                }
+            } catch (err) {
+                failed.push({ row, error: err.message });
             }
+
             
         })
         .on('end', () => {

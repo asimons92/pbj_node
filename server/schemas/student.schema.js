@@ -14,6 +14,10 @@ const StudentBaseSchema = z.object({
 
 // Helper to parse a full name string into components
 function parseFullName(fullName) {
+    if (!fullName) {
+        return { fullName: '', firstName: '', lastName: ''
+        }
+    }
     const tokens = fullName.trim().split(/\s+/);
     if (tokens.length === 1) {
         return { fullName, firstName: tokens[0], lastName: tokens[0] };

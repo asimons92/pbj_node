@@ -35,6 +35,10 @@ const studentsRouter = require('./routes/students.route');
 app.use('/api/auth', authRouter);
 app.use('/api/notes', notesRouter);
 app.use('/api/students', studentsRouter);
+app.use((err, req, res, next) => {
+  console.error('Error:', err.message);
+  res.status(err.status || 500).json({ error: err.message});
+});
 
 
 

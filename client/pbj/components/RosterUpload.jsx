@@ -4,6 +4,7 @@ import apiClient from '../services/apiClient';
 
 export default function RosterUpload() {
     const [uploadResult,setUploadResult] = useState(null);
+    const [error, setError] = useState();
     const onDrop =  useCallback( async (acceptedFiles) => {
         // Do something with the files
         const file = acceptedFiles[0];
@@ -11,17 +12,21 @@ export default function RosterUpload() {
         const formData = new FormData();
         formData.append('roster',file);
 
-        const response = await apiClient.post('/students/upload',formData)
-
-        setUploadResult(response.data);
-
+        try {
+            setError(null);
+            const response = await apiClient.post('/students/upload',formData)
+            setUploadResult(response.data);
+        } catch (error) {
+            setError(error.response?.data?.error || 'Upload failed');
+            setUploadResult(null);
+        }
       }, [])
 
       const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
     
       return (
         <>
-        <div {...getRootProps()}>
+        <div className='dropzone-div' {...getRootProps()}>
           <input {...getInputProps()} />
           {
             isDragActive ?
@@ -34,10 +39,14 @@ export default function RosterUpload() {
                 <p>Inserted: { uploadResult.inserted }</p>
                 <p>Updated: { uploadResult.updated }</p>
                 <p>Failed: {uploadResult.failed} </p>
+
+
             </>
 
          )} 
-
+        {error && (
+            <p className='error'>Error: { error }</p>
+        )}
         </div>
         </>
       )

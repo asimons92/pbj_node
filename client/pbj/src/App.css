@@ -343,3 +343,25 @@ body {
   transform: scale(0.98);
 }
 
+
+.dropzone-div {
+  width: 350px;
+  min-height: 120px;
+  margin: auto;
+  background-color: var(--color-secondary);
+  border-color: #111111;
+  border-style: dotted;
+  transition: background-color 0.25s ease;
+}
+
+.dropzone-div p {
+  padding: 10px;
+}
+
+.dropzone-div:hover {
+  background-color: var(--color-primary);
+  transition: background-color 0.25s ease;
+  background-color: var(--color-primary);
+  transition: background-color 0.25s ease;
+}
+
