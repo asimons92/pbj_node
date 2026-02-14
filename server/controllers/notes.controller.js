@@ -7,6 +7,9 @@ const BehaviorRecord = require('../models/BehaviorRecord.model');
 const mongoose = require('mongoose');
 const logger = require('../utils/logger');
 
+// Escape special regex characters to prevent ReDoS attacks
+const escapeRegex = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // test controller logic to check auth in postman
 const testGet = async (req,res) => {
     try {
@@ -138,7 +141,7 @@ const getNotes = async (req,res) => {
         const { student_name, category, severity } = req.query; // these values are from the req query. depends on frontend
         const filter = {}; // empty object to build filter object out of
         if (student_name) {
-            filter.student_name = { $regex: student_name, $options: 'i'};   // mongoose regex to find matches, case insensitive
+            filter.student_name = { $regex: escapeRegex(student_name), $options: 'i'};   // mongoose regex to find matches, case insensitive
         }
         if (category) {
             filter['behavior.category'] = category;  // add a category if there is one
@@ -228,7 +231,7 @@ const getMyNotes = async (req,res) => {
             createdBy: new mongoose.Types.ObjectId(req.user.id)
         }; 
         if (student_name) {
-            filter.student_name = { $regex: student_name, $options: 'i'};   // mongoose regex to find matches, case insensitive
+            filter.student_name = { $regex: escapeRegex(student_name), $options: 'i'};   // mongoose regex to find matches, case insensitive
         }
         if (category) {
             filter['behavior.category'] = category;  // add a category if there is one
