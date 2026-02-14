@@ -70,14 +70,16 @@ const login = async (req, res) => {
  * Checks for duplicate email/username before creating.
  */
 const register = async (req,res) => {
-  if (!req.body || !req.body.email || !req.body.password || !req.body.username || !req.body.role) {
+  if (!req.body || !req.body.email || !req.body.password || !req.body.username) {
     return res.status(400).json({error: 'Bad Request'}) // Maybe split into specifics
   }
   
   const username = req.body.username
   const email = req.body.email
   const password = req.body.password
-  const role = req.body.role
+  // Security: Users cannot self-assign roles. Default to 'teacher'.
+  // Admin roles must be assigned manually in the database or via admin endpoint.
+  const role = 'teacher'
   
   // Check for duplicates using MongoDB $or operator
   const existingUser = await User.findOne({ 
