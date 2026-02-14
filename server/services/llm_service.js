@@ -1,6 +1,7 @@
 const { OpenAI } = require('openai');
 const z = require('zod'); // Zod for schema validation
 const { BEHAVIOR_RECORD_TOOL } = require('../utils/llmTools');
+const logger = require('../utils/logger');
 
 // Lazy initialization of OpenAI client to avoid errors on module load
 let openai = null;
@@ -105,7 +106,7 @@ Use this exact timestamp value for the recording_timestamp field in the behavior
 
         return validatedData; // this should be an array of records
     } catch (error) {
-        console.error("LLM Service Error during API call or validation:", error.message);
+        logger.error("LLM Service Error during API call or validation:", error.message);
         // Re-throw the error so the controller can catch it and send a 500 response
         throw new Error(`LLM processing failed: ${error.message}`); 
     }};

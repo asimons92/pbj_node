@@ -2,8 +2,9 @@ const express = require('express'); // handles routing
 const mongoose = require('mongoose'); // handles MongoDB
 const cors = require('cors'); // allows local dev back/front to talk to each other
 const app = express(); // create app instance in express
-const PORT = 3000; // set what port node runs on
+const PORT = process.env.PORT || 3000;
 require('dotenv').config(); // load environment variables
+const logger = require('./utils/logger');
 
 // MongoDB connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/pbj'; // get mongodb credentials or use local 
@@ -12,10 +13,10 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/pbj'; 
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    console.log('Connected to MongoDB');
+    logger.info('Connected to MongoDB');
   })
   .catch((err) => {
-    console.error('Failed to connect to MongoDB:', err.message);
+    logger.error('Failed to connect to MongoDB:', err.message);
   });
 
 // middleware
@@ -53,7 +54,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/notes', notesRouter);
 app.use('/api/students', studentsRouter);
 app.use((err, req, res, next) => {
-  console.error('Error:', err.message);
+  logger.error('Error:', err.message);
   res.status(err.status || 500).json({ error: err.message});
 });
 
@@ -61,6 +62,6 @@ app.use((err, req, res, next) => {
 
 // listener
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  logger.info(`Server is running on http://localhost:${PORT}`);
 });
 

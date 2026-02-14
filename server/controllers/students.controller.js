@@ -1,5 +1,6 @@
 const Student = require('../models/Student.model');
 const parseStudentCSV = require('../services/csv.service');
+const logger = require('../utils/logger');
 
 
 
@@ -29,9 +30,9 @@ const getAllStudents = async (req,res) => {
         const hasNextPage = page < totalPages;                              // booleans say if we display buttons or not
         const hasPrevPage = page > 1;
 
-        console.log('req.user:', req.user);
-        console.log('req.user._id:', req.user.id);
-        console.log('Filter:', filter);
+        logger.debug('req.user:', req.user);
+        logger.debug('req.user._id:', req.user.id);
+        logger.debug('Filter:', filter);
 
         res.status(200).json({
             students: students,
@@ -45,7 +46,7 @@ const getAllStudents = async (req,res) => {
             }
         })
     } catch (error) {
-        console.error('Database retrieval error:',error.message);
+        logger.error('Database retrieval error:',error.message);
         res.status(500).json({ error: 'Failed to retrieve students.', detail: error.message });
     }
 }

@@ -5,6 +5,7 @@ const { redactText, deanonymizeObject } = require('../services/redaction_service
 // Import BehaviorRecord model
 const BehaviorRecord = require('../models/BehaviorRecord.model');
 const mongoose = require('mongoose');
+const logger = require('../utils/logger');
 
 // test controller logic to check auth in postman
 const testGet = async (req,res) => {
@@ -31,7 +32,7 @@ const postNote = async (req, res) => {
     try {
 
         //  --- REDACT NAMES BEFORE SENDING TO LLM ---
-        console.log('Redacting names before LLM processing.');
+        logger.debug('Redacting names before LLM processing.');
         let redactedText = originalText;
         let nameMapping = {};
         
@@ -39,14 +40,14 @@ const postNote = async (req, res) => {
             const redactionResult = await redactText(originalText);
             redactedText = redactionResult.redacted_text;
             nameMapping = redactionResult.name_mapping;
-            console.log(`Redacted ${Object.keys(nameMapping).length} unique person(s) in text.`);
+            logger.debug(`Redacted ${Object.keys(nameMapping).length} unique person(s) in text.`);
         } catch (redactionError) {
-            console.warn('Redaction service unavailable, proceeding without redaction:', redactionError.message);
+            logger.warn('Redaction service unavailable, proceeding without redaction:', redactionError.message);
             // Continue without redaction if service is down (graceful degradation)
         }
 
         //  --- CALL THE LLM SERVICE WITH REDACTED TEXT ---
-        console.log('Calling LLM API for notes.');
+        logger.debug('Calling LLM API for notes.');
         // Generate the recording timestamp (when the note is being processed/recorded)
         const recordingTimestamp = new Date();
         // We need to wait for the structured data from the service
@@ -58,7 +59,7 @@ const postNote = async (req, res) => {
         }
         
         //  --- DE-ANONYMIZE LLM RESPONSE BEFORE SAVING TO DB ---
-        console.log('De-anonymizing LLM response.');
+        logger.debug('De-anonymizing LLM response.');
         const deanonymizedData = deanonymizeObject(llmData, nameMapping);
         
         // set up the records for database storage
@@ -78,7 +79,7 @@ const postNote = async (req, res) => {
                                    // this is important later for error handling 
             );
             
-            console.log(`Successfully saved records.`);
+            logger.debug(`Successfully saved records.`);
             
             //  --- SEND THE SUCCESSFUL RESPONSE ---
             // console.log(savedRecords)
@@ -119,7 +120,7 @@ const postNote = async (req, res) => {
         
     } catch (error) {
         // Ensure error logging is robust
-        console.error('LLM API or Database Error:', error.message);
+        logger.error('LLM API or Database Error:', error.message);
         res.status(500).json({ error: 'Failed to process or save notes.', detail: error.message});
     }
 };
@@ -132,7 +133,7 @@ const getNotes = async (req,res) => {
 
     try {
         // Debug: log admin query
-        console.log('getNotes (admin) - Querying all records, page:', page);
+        logger.debug('getNotes (admin) - Querying all records, page:', page);
         
         const { student_name, category, severity } = req.query; // these values are from the req query. depends on frontend
         const filter = {}; // empty object to build filter object out of
@@ -153,9 +154,9 @@ const getNotes = async (req,res) => {
         ]);
 
         // Debug: log what was found
-        console.log('getNotes (admin) - Found', records.length, 'records out of', totalCount, 'total');
+        logger.debug('getNotes (admin) - Found', records.length, 'records out of', totalCount, 'total');
         if (records.length > 0) {
-            console.log('Sample record createdBy:', records[0].createdBy);
+            logger.debug('Sample record createdBy:', records[0].createdBy);
         }
 
         const totalPages = Math.ceil(totalCount / limit);                   // how many pages
@@ -174,7 +175,7 @@ const getNotes = async (req,res) => {
             }
         });
     } catch (error) {
-        console.error('Database retrieval error:',error.message);
+        logger.error('Database retrieval error:',error.message);
         res.status(500).json({ error: 'Failed to retrieve behavior records.', detail: error.message });
 
     }
@@ -184,18 +185,18 @@ const getNotes = async (req,res) => {
 const getNoteById = async (req,res) => {
     try {
         const recordId = req.params.id;
-        console.log('Got recordId from req.params ' ,{recordId})
+        logger.debug('Got recordId from req.params ' ,{recordId})
         // Build query with permission check to prevent information disclosure
         // Admins can see any record, users can only see their own
         const query = { _id: recordId };
-        console.log('Building query object with recordId',{query})
+        logger.debug('Building query object with recordId',{query})
         if (req.user.role !== 'admin') {
             query.createdBy = new mongoose.Types.ObjectId(req.user.id);
-            console.log('If not admin block hit')
+            logger.debug('If not admin block hit')
         }
         
         const record = await BehaviorRecord.findOne(query);
-        console.log('record value is ',{record}) // this is coming back null for an unauthorized user
+        logger.debug('record value is ',{record})
         // If record not found, it could be:
         // 1. Record doesn't exist
         // 2. Record exists but user doesn't have permission
@@ -208,7 +209,7 @@ const getNoteById = async (req,res) => {
             record: record
         });
     } catch (error) {
-        console.error('Get note by ID error:', error.message);
+        logger.error('Get note by ID error:', error.message);
         res.status(500).json({ error: 'Failed to retrieve record.', detail: error.message });
     }
 }
@@ -220,7 +221,7 @@ const getMyNotes = async (req,res) => {
 
     try {
         // Debug: log the user making the request
-        console.log('getMyNotes - User ID:', req.user.id, 'Role:', req.user.role, 'Get All:', getAll);
+        logger.debug('getMyNotes - User ID:', req.user.id, 'Role:', req.user.role, 'Get All:', getAll);
         
         const { student_name, category, severity } = req.query; // these values are from the req query. depends on frontend
         const filter = {
@@ -272,7 +273,7 @@ const getMyNotes = async (req,res) => {
             });
         }
     } catch (error) {
-        console.error('Database retrieval error:',error.message);
+        logger.error('Database retrieval error:',error.message);
         res.status(500).json({ error: 'Failed to retrieve behavior records.', detail: error.message });
 
     }
@@ -305,7 +306,7 @@ const deleteNote = async (req,res) => {
         await BehaviorRecord.findByIdAndDelete(recordId);
         res.status(200).json({ message: 'Record deleted successfully' });
     } catch (error) {
-        console.error('Delete record error:', error.message);
+        logger.error('Delete record error:', error.message);
         res.status(500).json({ error: 'Failed to delete record.', detail: error.message });
     }
 }
@@ -342,7 +343,7 @@ const editNote = async (req,res) => {
         );
         return res.status(200).json(updatedRecord);
     } catch (error) {
-        console.error('Edit record error:', error.message);
+        logger.error('Edit record error:', error.message);
         return res.status(500).json({ error: 'Failed to update record.', detail: error.message });
     }
 }

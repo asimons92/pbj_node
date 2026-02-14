@@ -1,4 +1,5 @@
 const axios = require('axios');
+const logger = require('../utils/logger');
 
 // Configuration for the redaction service
 const REDACTION_SERVICE_URL = process.env.REDACTION_SERVICE_URL || 'http://localhost:8000';
@@ -19,7 +20,7 @@ async function redactText(text) {
             name_mapping: response.data.name_mapping
         };
     } catch (error) {
-        console.error('Redaction service error:', error.message);
+        logger.error('Redaction service error:', error.message);
         if (error.response) {
             throw new Error(`Redaction service failed: ${error.response.status} - ${error.response.data}`);
         }

@@ -10,6 +10,7 @@ const jwt_secret = process.env.JWT_SECRET; // Secret key for signing/verifying J
 const User = require('../models/User.model.js');
 const bcrypt = require('bcryptjs'); // Password hashing library
 const { verifyPassword } = require('../utils/password.js');
+const logger = require('../utils/logger');
 
 
 
@@ -169,7 +170,7 @@ const getUsers = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching users:', error);
+        logger.error('Error fetching users:', error);
         res.status(500).json({ error: 'Failed to fetch users' });
     }
 };
