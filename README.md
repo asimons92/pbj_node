@@ -193,7 +193,7 @@ PBJ exists to **capture expertise that would otherwise be lost** and transform i
 
 I'm a high school teacher building tools to solve problems I see in my own classroom every day. This project combines my teaching experience with my growing software engineering skills to address a gap that commercially available tools haven't filled.
 
-**Contact:** [Your email or LinkedIn]
+**Contact:** linkedin.com/in/asimons92
 
 ---
 
