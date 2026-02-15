@@ -1,9 +1,15 @@
+@import "tailwindcss";
+
+/* 
+ * Your custom CSS can still live here!
+ * Tailwind classes and custom CSS work side-by-side.
+ * As you migrate components, you can delete the custom CSS rules.
+ */
+
 button {
   color: black;
 }
 
 .submit-button {
-  background-color: white
+  background-color: white;
 }
-
-

@@ -19,15 +19,14 @@ body {
 
 /* ===== DESIGN TOKENS ===== */
 :root {
-  --color-secondary: #f3f3f3;
+  --color-secondary: #f4f6f8;
   --color-primary: #ffffff;
-  --color-accent: rgb(47, 159, 174);
-  --color-text: #111111;
-  --color-danger: #dc3545;
+  --color-accent: #2563eb;
+  --color-text: #23272f;
+  --color-danger: #e11d48;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
 }
-
 /* ===== PAGINATION ===== */
 .pagination-div {
   display: flex;
@@ -65,11 +64,32 @@ body {
   right: 0;
   width: 100%;
   z-index: 1000;
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.10);
 }
 
 .navbar-left {
   display: flex;
 }
+
+.navbar-left h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  margin: 0;
+  color: var(--color-accent);
+  cursor: pointer;
+  /* You may add a logo image as background if needed */
+  /* background-image: url('/path/to/logo.png');
+     background-size: contain;
+     background-repeat: no-repeat;
+     padding-left: 2.5rem; */
+  transition: color 0.16s;
+}
+
+.navbar-left h1:hover {
+  color: #0056b3;
+}
+
 
 .navbar-right {
   display: flex;
@@ -83,8 +103,10 @@ body {
 
 .nav-link {
   color: var(--color-text);
-  margin: 10px
+  margin: 10px;
+  text-decoration: none;
 }
+
 
 .parsing-overlay {
   position: absolute;
